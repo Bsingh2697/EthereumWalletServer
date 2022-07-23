@@ -6,4 +6,5 @@ app.get('/',(req:Request,res:Response, next:NextFunction) =>{
     res.send('Hello WELCOME');
 })
 
-app.listen(3000,()=>console.log("Server running"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT,()=>console.log("Server running"));
