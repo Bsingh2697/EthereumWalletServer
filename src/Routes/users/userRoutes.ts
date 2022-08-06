@@ -12,7 +12,7 @@ const User = require('../../models/UserModel/User')
 const {registerValidation, loginValidation} = require('../../Validation/validation') 
 
 // ********************** Find All Users **********************
-router.get('/', auth,controller.fetchAllUsers)
+router.get('/',controller.fetchAllUsers)
 
 // ********************** Find user by ID **********************
 router.get('/:user_id',auth, controller.fetchUserDetails)
