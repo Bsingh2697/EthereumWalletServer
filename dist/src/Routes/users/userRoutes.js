@@ -20,6 +20,10 @@ const {
  ** If we put "/key" route under "/:user_id" then
  ** we won't be able to access "/key" route
  */
+// ********************** Test API **********************
+router.get("/test", (req, res) => {
+  res.send("hello world SIR");
+});
 // ********************** Find All Users **********************
 router.get("/", controller.fetchAllUsers);
 // ********************** Find key by ID **********************

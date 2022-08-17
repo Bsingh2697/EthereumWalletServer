@@ -16,6 +16,11 @@ const {registerValidation, loginValidation} = require('../../Validation/validati
 ** we won't be able to access "/key" route
 */
 
+// ********************** Test API **********************
+router.get('/test', (req, res) => {
+  res.send('hello world SIR')
+})
+
 // ********************** Find All Users **********************
 router.get('/',controller.fetchAllUsers)
 
