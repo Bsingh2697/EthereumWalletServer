@@ -26,23 +26,27 @@ app.use(UrlConstants_1.URL_CONSTANTS.user, usersRoute);
 // }
 // // ********************** INITIALIZE APPLICATION **********************
 // init();
-let connRes;
 try {
     let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`;
     mongoose_1.default.connect(connStr);
     const conn = mongoose_1.default.connection;
-    conn.once('connected', () => {
+    conn.once('connected', (x) => {
         console.log("Connected");
-        connRes = "Connected";
+        app.get('/', (req, res) => {
+            res.send(`hello world SIR, ${x}`);
+        });
     });
-    conn.once('error', () => (console.log("Error"), connRes = "Error"));
+    conn.once('error', (x) => (console.log("Error"),
+        app.get('/', (req, res) => {
+            res.send(`Error, error ${x}`);
+        })));
     conn.once('open', () => console.log("Open"));
 }
 catch (error) {
+    app.get('/', (req, res) => {
+        res.send(`Error, ${error}`);
+    });
 }
-app.get('/', (req, res) => {
-    res.send(`hello world SIR, ${connRes}`);
-});
 // ********************** SET PORT **********************
 const PORT = process.env.PORT || 3000 || 8080;
 app.listen(PORT, () => console.log("Server running"));
