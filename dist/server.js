@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // ********************** IMPORTS **********************
 const express_1 = __importDefault(require("express"));
+const UrlConstants_1 = require("./src/utils/constants/UrlConstants");
 // ********************** Module Imports **********************
 const cors = require('cors');
 // ********************** IMPORT ROUTES **********************
@@ -13,10 +14,10 @@ const usersRoute = require('./src/Routes').user;
 const app = (0, express_1.default)();
 // ********************** Middleware And Routes **********************
 // Middleware
-// app.use(cors())
-// app.use(express.json())
-// // ROUTES
-// app.use(URL_CONSTANTS.user,usersRoute)
+app.use(cors());
+app.use(express_1.default.json());
+// ROUTES
+app.use(UrlConstants_1.URL_CONSTANTS.user, usersRoute);
 // ********************** INIT FUNCTION **********************
 // const init = async() => {
 //     const db = new Database();

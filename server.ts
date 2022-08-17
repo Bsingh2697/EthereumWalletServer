@@ -15,10 +15,10 @@ const app: Application = express();
 // ********************** Middleware And Routes **********************
 
     // Middleware
-    // app.use(cors())
-    // app.use(express.json())
-    // // ROUTES
-    // app.use(URL_CONSTANTS.user,usersRoute)
+    app.use(cors())
+    app.use(express.json())
+    // ROUTES
+    app.use(URL_CONSTANTS.user,usersRoute)
 
 // ********************** INIT FUNCTION **********************
 // const init = async() => {
