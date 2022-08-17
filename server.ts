@@ -21,13 +21,13 @@ const app: Application = express();
     app.use(URL_CONSTANTS.user,usersRoute)
 
 // ********************** INIT FUNCTION **********************
-// const init = async() => {
-//     const db = new Database();
-//     await db.connectToDb() 
-// }
+const init = async() => {
+    const db = new Database();
+    await db.connectToDb() 
+}
 
 // ********************** INITIALIZE APPLICATION **********************
-// init();
+init();
 
 app.get('/', (req, res) => {
   res.send('hello world SIR')
