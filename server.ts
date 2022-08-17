@@ -14,20 +14,8 @@ const app: Application = express();
 
 // ********************** Middleware And Routes **********************
 
-    // Middleware
-    app.use(cors())
-    app.use(express.json())
-    // ROUTES
-    app.use(URL_CONSTANTS.user,usersRoute)
-
-// ********************** INIT FUNCTION **********************
-const init = async() => {
-    const db = new Database();
-    await db.connectToDb() 
-}
-
-// ********************** INITIALIZE APPLICATION **********************
-init();
+//  
+app.use('./',"Hello World!")
 
 // ********************** SET PORT **********************
 const PORT = process.env.PORT || 3000 || 8080;
