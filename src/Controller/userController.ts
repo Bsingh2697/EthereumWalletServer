@@ -1,5 +1,4 @@
 import express, {Application, Request, Response, NextFunction} from 'express';
-import AES from 'crypto-js/AES';
 import CryptoJS from 'crypto-js'
 const jwt = require('jsonwebtoken');
 const User = require('../models/UserModel/User')
@@ -32,7 +31,7 @@ exports.fetchUserDetails = async(request:Request,response:Response) => {
     try{
         console.log("ID : ",request.params.user_id);
         const user = await User.findById(request.params.user_id);
-        const address = AES.decrypt(user?.address,process.env.UNIQUE_USERNAME!).toString(CryptoJS.enc.Utf8)
+        const address = CryptoJS.AES.decrypt(user?.address,process.env.UNIQUE_USERNAME!).toString(CryptoJS.enc.Utf8)
         user ? response.status(200).send({status:{code:200, message:"Success"},data:{user : user?._id, address : address}}) :
         response.status(400).send({status:{code:400, message:{header:"Error fetching user details",body:"Unable to find user with the provided ID"}}})
         // data:{user_id: user._id,address: user.address}});
@@ -81,24 +80,24 @@ exports.signup =  async(request: Request, response:Response, next: NextFunction)
     console.log("UQ:",uniqueKey);
     
     // PRIVATE KEY
-    const encryptedPRK_uname = AES.encrypt(privateKey,username).toString()
-    const encryptedPRK_pwd = AES.encrypt(privateKey,password).toString()
+    const encryptedPRK_uname = CryptoJS.AES.encrypt(privateKey,username).toString()
+    const encryptedPRK_pwd = CryptoJS.AES.encrypt(privateKey,password).toString()
     // ADDRESS
-    const encryptedAddress = AES.encrypt(address,uniqueKey).toString()
+    const encryptedAddress = CryptoJS.AES.encrypt(address,uniqueKey).toString()
     // USERNAME
-    const encryptedUname_pk = AES.encrypt(username,privateKey).toString()
-    const encryptedUname_pwd = AES.encrypt(username,password).toString()
+    const encryptedUname_pk = CryptoJS.AES.encrypt(username,privateKey).toString()
+    const encryptedUname_pwd = CryptoJS.AES.encrypt(username,password).toString()
     // PASSWORD
-    const encryptedPwd_pk = AES.encrypt(password,privateKey).toString()
-    const encryptedPwd_uname = AES.encrypt(password,username).toString()
+    const encryptedPwd_pk = CryptoJS.AES.encrypt(password,privateKey).toString()
+    const encryptedPwd_uname = CryptoJS.AES.encrypt(password,username).toString()
     // UNIQUENAME
-    const uniqueUname = AES.encrypt(username,uniqueKey).toString()
+    const uniqueUname = CryptoJS.AES.encrypt(username,uniqueKey).toString()
 
     // === CHECKING IF USERNAME IS UNIQUE OR NOT
     const usernameList = await User.find({},{'_id':0,'unique_user':1})    
     let isUnique = true
     for(var i=0; i<usernameList.length; i++){
-        let uname = AES.decrypt(usernameList[i].unique_user,process.env.UNIQUE_USERNAME!).toString(CryptoJS.enc.Utf8)
+        let uname = CryptoJS.AES.decrypt(usernameList[i].unique_user,process.env.UNIQUE_USERNAME!).toString(CryptoJS.enc.Utf8)
         console.log("Uname : ",uname);
         console.log("Username : ",username);
         
@@ -174,8 +173,8 @@ exports.signin = async(request: Request, response:Response, next: NextFunction) 
         let uname;
         let pwd;
              try{
-            uname = AES.decrypt(usersList[i].username_pwd,password).toString(CryptoJS.enc.Utf8)
-            pwd = AES.decrypt(usersList[i].password_uname,username).toString(CryptoJS.enc.Utf8)
+            uname = CryptoJS.AES.decrypt(usersList[i].username_pwd,password).toString(CryptoJS.enc.Utf8)
+            pwd = CryptoJS.AES.decrypt(usersList[i].password_uname,username).toString(CryptoJS.enc.Utf8)
         }
         catch(e){
             console.log(e);
@@ -206,7 +205,7 @@ exports.signin = async(request: Request, response:Response, next: NextFunction) 
             { algorithm: 'HS256'},
             { expiresIn : 10000000}
         )
-            let address = AES.decrypt(res[0]?.address,process.env.UNIQUE_USERNAME!).toString(CryptoJS.enc.Utf8)
+            let address = CryptoJS.AES.decrypt(res[0]?.address,process.env.UNIQUE_USERNAME!).toString(CryptoJS.enc.Utf8)
             return response.status(200).send({status:{code:200, message:"Success"},data:{user:{user_id: res[0]._id,address: address},token:token}})
     }
    ).catch((error) => {

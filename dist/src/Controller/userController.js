@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const AES_1 = __importDefault(require("crypto-js/AES"));
 const crypto_js_1 = __importDefault(require("crypto-js"));
 const jwt = require('jsonwebtoken');
 const User = require('../models/UserModel/User');
@@ -36,7 +35,7 @@ exports.fetchUserDetails = (request, response) => __awaiter(void 0, void 0, void
     try {
         console.log("ID : ", request.params.user_id);
         const user = yield User.findById(request.params.user_id);
-        const address = AES_1.default.decrypt(user === null || user === void 0 ? void 0 : user.address, process.env.UNIQUE_USERNAME).toString(crypto_js_1.default.enc.Utf8);
+        const address = crypto_js_1.default.AES.decrypt(user === null || user === void 0 ? void 0 : user.address, process.env.UNIQUE_USERNAME).toString(crypto_js_1.default.enc.Utf8);
         user ? response.status(200).send({ status: { code: 200, message: "Success" }, data: { user: user === null || user === void 0 ? void 0 : user._id, address: address } }) :
             response.status(400).send({ status: { code: 400, message: { header: "Error fetching user details", body: "Unable to find user with the provided ID" } } });
         // data:{user_id: user._id,address: user.address}});
@@ -81,23 +80,23 @@ exports.signup = (request, response, next) => __awaiter(void 0, void 0, void 0, 
     let uniqueKey = process.env.UNIQUE_USERNAME;
     console.log("UQ:", uniqueKey);
     // PRIVATE KEY
-    const encryptedPRK_uname = AES_1.default.encrypt(privateKey, username).toString();
-    const encryptedPRK_pwd = AES_1.default.encrypt(privateKey, password).toString();
+    const encryptedPRK_uname = crypto_js_1.default.AES.encrypt(privateKey, username).toString();
+    const encryptedPRK_pwd = crypto_js_1.default.AES.encrypt(privateKey, password).toString();
     // ADDRESS
-    const encryptedAddress = AES_1.default.encrypt(address, uniqueKey).toString();
+    const encryptedAddress = crypto_js_1.default.AES.encrypt(address, uniqueKey).toString();
     // USERNAME
-    const encryptedUname_pk = AES_1.default.encrypt(username, privateKey).toString();
-    const encryptedUname_pwd = AES_1.default.encrypt(username, password).toString();
+    const encryptedUname_pk = crypto_js_1.default.AES.encrypt(username, privateKey).toString();
+    const encryptedUname_pwd = crypto_js_1.default.AES.encrypt(username, password).toString();
     // PASSWORD
-    const encryptedPwd_pk = AES_1.default.encrypt(password, privateKey).toString();
-    const encryptedPwd_uname = AES_1.default.encrypt(password, username).toString();
+    const encryptedPwd_pk = crypto_js_1.default.AES.encrypt(password, privateKey).toString();
+    const encryptedPwd_uname = crypto_js_1.default.AES.encrypt(password, username).toString();
     // UNIQUENAME
-    const uniqueUname = AES_1.default.encrypt(username, uniqueKey).toString();
+    const uniqueUname = crypto_js_1.default.AES.encrypt(username, uniqueKey).toString();
     // === CHECKING IF USERNAME IS UNIQUE OR NOT
     const usernameList = yield User.find({}, { '_id': 0, 'unique_user': 1 });
     let isUnique = true;
     for (var i = 0; i < usernameList.length; i++) {
-        let uname = AES_1.default.decrypt(usernameList[i].unique_user, process.env.UNIQUE_USERNAME).toString(crypto_js_1.default.enc.Utf8);
+        let uname = crypto_js_1.default.AES.decrypt(usernameList[i].unique_user, process.env.UNIQUE_USERNAME).toString(crypto_js_1.default.enc.Utf8);
         console.log("Uname : ", uname);
         console.log("Username : ", username);
         if (uname == username) {
@@ -157,8 +156,8 @@ exports.signin = (request, response, next) => __awaiter(void 0, void 0, void 0, 
                 let uname;
                 let pwd;
                 try {
-                    uname = AES_1.default.decrypt(usersList[i].username_pwd, password).toString(crypto_js_1.default.enc.Utf8);
-                    pwd = AES_1.default.decrypt(usersList[i].password_uname, username).toString(crypto_js_1.default.enc.Utf8);
+                    uname = crypto_js_1.default.AES.decrypt(usersList[i].username_pwd, password).toString(crypto_js_1.default.enc.Utf8);
+                    pwd = crypto_js_1.default.AES.decrypt(usersList[i].password_uname, username).toString(crypto_js_1.default.enc.Utf8);
                 }
                 catch (e) {
                     console.log(e);
@@ -183,7 +182,7 @@ exports.signin = (request, response, next) => __awaiter(void 0, void 0, void 0, 
             var _a, _b;
             console.log("SUCCESS PROMISE", res);
             const token = yield jwt.sign({ user_id: (_a = res[0]) === null || _a === void 0 ? void 0 : _a._id, }, uniqueKey, { algorithm: 'HS256' }, { expiresIn: 10000000 });
-            let address = AES_1.default.decrypt((_b = res[0]) === null || _b === void 0 ? void 0 : _b.address, process.env.UNIQUE_USERNAME).toString(crypto_js_1.default.enc.Utf8);
+            let address = crypto_js_1.default.AES.decrypt((_b = res[0]) === null || _b === void 0 ? void 0 : _b.address, process.env.UNIQUE_USERNAME).toString(crypto_js_1.default.enc.Utf8);
             return response.status(200).send({ status: { code: 200, message: "Success" }, data: { user: { user_id: res[0]._id, address: address }, token: token } });
         })).catch((error) => {
             return response.status(400).send({ status: { code: 400, message: { header: "Invalid Credentials", body: "Please try with correct credentials" } } });
