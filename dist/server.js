@@ -24,6 +24,9 @@ const app = (0, express_1.default)();
 // }
 // // ********************** INITIALIZE APPLICATION **********************
 // init();
+app.get('/', (req, res) => {
+    res.send('hello world');
+});
 // ********************** SET PORT **********************
 const PORT = process.env.PORT || 3000 || 8080;
 app.listen(PORT, () => console.log("Server running"));
