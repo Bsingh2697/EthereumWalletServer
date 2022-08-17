@@ -30,29 +30,28 @@ const app: Application = express();
 // // ********************** INITIALIZE APPLICATION **********************
 // init();
 
-try{
-    let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`
-    mongoose.connect(connStr)
-    const conn = mongoose.connection
-    conn.once('connected', (x) => {
-        console.log("Connected")
-        app.get('/', (req, res) => {
-      res.send(`hello world SIR, ${x}`,)
-    })
-    })
-    conn.once('error', (x)=>(console.log("Error"),
-      app.get('/', (req, res) => {
-      res.send(`Error, error ${x}`,)
-    })
-    ))
-    conn.once('open', () => console.log("Open"))
-}catch(error){
-  app.get('/', (req, res) => {
-  res.send(`Error, ${error}`,)
+app.get('/', (req, res) => {
+  try{
+      let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`
+      mongoose.connect(connStr)
+      const conn = mongoose.connection
+      conn.on('connected', () => {
+          console.log("Connected")
+      res.send('Connected')
+      })
+      conn.on('error', ()=>
+      {
+          console.log("Error"),
+          res.send('TRY ERROR')
+      })
+      conn.once('open', () => 
+      {   console.log("Open"),
+          res.send('Open')
+      })
+  }catch(error){
+       res.send('ERROR CATCH')
+  }
 })
-}
-
-
 
 // ********************** SET PORT **********************
 const PORT = process.env.PORT || 3000 || 8080;
