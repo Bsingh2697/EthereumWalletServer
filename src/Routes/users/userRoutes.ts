@@ -1,6 +1,4 @@
 import express, {Application, Request, Response, NextFunction} from 'express';
-import AES from 'crypto-js/AES';
-import CryptoJS from 'crypto-js'
 
 const controller = require('../../Controller/userController.ts')
 
