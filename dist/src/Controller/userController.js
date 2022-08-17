@@ -20,7 +20,6 @@ const { registerValidation, loginValidation } = require('../Validation/validatio
 exports.fetchAllUsers = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("REQUEST : ", request);
     console.log("REQUEST : ", request === null || request === void 0 ? void 0 : request.user);
-    console.log("REQUEST PARAM : ", request.params);
     console.log("REQUEST BODY: ", request.body);
     try {
         const users = yield User.find();

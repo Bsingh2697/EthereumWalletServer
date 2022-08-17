@@ -15,7 +15,6 @@ export interface UserRequest extends Request {
 exports.fetchAllUsers = async(request:UserRequest,response:Response) => {
     console.log("REQUEST : ",request);
     console.log("REQUEST : ",request?.user);
-    console.log("REQUEST PARAM : ",request.params);
     console.log("REQUEST BODY: ",request.body);
     try{
         const users = await User.find()

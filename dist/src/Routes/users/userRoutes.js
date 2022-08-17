@@ -22,6 +22,8 @@ const {
  */
 // ********************** Find All Users **********************
 router.get("/", controller.fetchAllUsers);
+// ********************** Find All Users **********************
+router.get("/all", controller.fetchAllUsers);
 // ********************** Find key by ID **********************
 router.get("/key", auth, controller.fetchUserPrivateKey);
 // ********************** Find user by ID **********************
