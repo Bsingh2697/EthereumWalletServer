@@ -18,8 +18,12 @@ exports.fetchAllUsers = async(request:UserRequest,response:Response) => {
     console.log("REQUEST PARAM : ",request.params);
     console.log("REQUEST BODY: ",request.body);
     try{
-        // const users = await User.find()
-        response.status(200).send({status:{code:200, message:"Success"},data:{users:"users"}})
+        const users = await User.find()
+        users.then((list:any)=>
+            response.status(200).send({status:{code:200, message:"Success"},data:{users:"users"}})
+        ).catch((err:any) => {
+            response.status(400).send({status:{code:400, message:{header:"Error fetching users",body:err}}})
+        })
     }
     catch(err){
         response.status(400).send({status:{code:400, message:{header:"Error fetching users",body:err}}})
