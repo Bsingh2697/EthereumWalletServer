@@ -1,9 +1,14 @@
 import express, {Application, Request, Response, NextFunction} from 'express';
-import mongoose from "mongoose"
+
 const controller = require('../../Controller/userController.ts')
 
+const jwt = require('jsonwebtoken');
+
 const router = express.Router();
+const auth = require('../../Middlewares/auth');
 const User = require('../../models/UserModel/User')
+const {registerValidation, loginValidation} = require('../../Validation/validation') 
+
 
 /*
 ** Order of routes matter
@@ -11,33 +16,22 @@ const User = require('../../models/UserModel/User')
 ** we won't be able to access "/key" route
 */
 
-// ********************** Test API **********************
-router.get('/test', async(req, res) => {
-    let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`
-    let uu = process.env.UNIQUE_USERNAME
-    const user = await User.find()
-    user.then(
-    ()=>res.send(`hello world SIR 222 -  ${connStr} -- ${uu} ---------- ${mongoose.connection.readyState} ----------- ${user.stringify()}`,)
-    ).catch((err:any) => res.send(`hello world SIR 222 -  ${connStr} -- ${uu} ---------- ${mongoose.connection.readyState} ----------- ${err.stringify()}`,)
-        )
-})
-
 // ********************** Find All Users **********************
 router.get('/',controller.fetchAllUsers)
 
-// // ********************** Find key by ID **********************
-// router.get('/key',auth, controller.fetchUserPrivateKey)
+// ********************** Find key by ID **********************
+router.get('/key',auth, controller.fetchUserPrivateKey)
 
-// // ********************** Find user by ID **********************
-// router.get('/:user_id',auth, controller.fetchUserDetails)
+// ********************** Find user by ID **********************
+router.get('/:user_id',auth, controller.fetchUserDetails)
 
-// // ********************** Remove user by ID **********************
-// router.delete('/:user_id',auth, controller.deleteUser)
+// ********************** Remove user by ID **********************
+router.delete('/:user_id',auth, controller.deleteUser)
 
-// // ********************** SIGNUP - ADD NEW USER **********************
-// router.post('/signup',controller.signup)
+// ********************** SIGNUP - ADD NEW USER **********************
+router.post('/signup',controller.signup)
 
-// // ********************** LOGIN - USER **********************
-// router.post('/signin',controller.signin)
+// ********************** LOGIN - USER **********************
+router.post('/signin',controller.signin)
 
 module.exports = router;
