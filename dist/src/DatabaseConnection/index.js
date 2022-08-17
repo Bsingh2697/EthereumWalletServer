@@ -24,7 +24,7 @@ class Database {
                     const conn = mongoose_1.default.connection;
                     conn.on('connected', () => {
                         console.log("Connected");
-                        // resolve()
+                        resolve("Connected");
                     });
                     conn.on('error', () => console.log("Error"));
                     conn.once('open', () => console.log("Open"));

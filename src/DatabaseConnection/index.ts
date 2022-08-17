@@ -10,7 +10,7 @@ export class Database {
                 const conn = mongoose.connection
                 conn.on('connected', () => {
                     console.log("Connected")
-                    // resolve()
+                    resolve("Connected")
                 })
                 conn.on('error', ()=>console.log("Error"))
                 conn.once('open', () => console.log("Open"))

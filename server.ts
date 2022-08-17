@@ -2,6 +2,7 @@
 import express, {Application, Request, Response, NextFunction} from 'express';
 import {Database} from './src/DatabaseConnection'
 import { URL_CONSTANTS } from './src/utils/constants/UrlConstants';
+import mongoose from "mongoose"
 
 // ********************** Module Imports **********************
 const cors = require('cors')
@@ -20,17 +21,31 @@ const app: Application = express();
     // ROUTES
     app.use(URL_CONSTANTS.user,usersRoute)
 
-// ********************** INIT FUNCTION **********************
-const init = async() => {
-    const db = new Database();
-    await db.connectToDb() 
+// // ********************** INIT FUNCTION **********************
+// const init = async() => {
+//     const db = new Database();
+//     await db.connectToDb() 
+// }
+
+// // ********************** INITIALIZE APPLICATION **********************
+// init();
+
+let connRes :string;
+try{
+    let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`
+    mongoose.connect(connStr)
+    const conn = mongoose.connection
+    conn.once('connected', () => {
+        console.log("Connected")
+        connRes = "Connected"
+    })
+    conn.once('error', ()=>(console.log("Error"),connRes = "Error"))
+    conn.once('open', () => console.log("Open"))
+}catch(error){
 }
 
-// ********************** INITIALIZE APPLICATION **********************
-init();
-
 app.get('/', (req, res) => {
-  res.send('hello world SIR')
+  res.send(`hello world SIR, ${connRes}`,)
 })
 
 // ********************** SET PORT **********************

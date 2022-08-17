@@ -2,13 +2,7 @@ import express, {Application, Request, Response, NextFunction} from 'express';
 
 const controller = require('../../Controller/userController.ts')
 
-const jwt = require('jsonwebtoken');
-
 const router = express.Router();
-const auth = require('../../Middlewares/auth');
-const User = require('../../models/UserModel/User')
-const {registerValidation, loginValidation} = require('../../Validation/validation') 
-
 
 /*
 ** Order of routes matter
