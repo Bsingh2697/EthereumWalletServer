@@ -9,7 +9,6 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const controller = require("../../Controller/userController.js");
 const router = express_1.default.Router();
-
 /*
  ** Order of routes matter
  ** If we put "/key" route under "/:user_id" then
