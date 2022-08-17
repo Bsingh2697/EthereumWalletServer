@@ -16,8 +16,6 @@ const {registerValidation, loginValidation} = require('../../Validation/validati
 ** we won't be able to access "/key" route
 */
 
-// ********************** Find All Users **********************
-router.get('/',controller.fetchAllUsers)
 
 // ********************** Find All Users **********************
 router.get('/all',controller.fetchAllUsers)
@@ -25,16 +23,16 @@ router.get('/all',controller.fetchAllUsers)
 // ********************** Find key by ID **********************
 router.get('/key',auth, controller.fetchUserPrivateKey)
 
-// ********************** Find user by ID **********************
-router.get('/:user_id',auth, controller.fetchUserDetails)
-
-// ********************** Remove user by ID **********************
-router.delete('/:user_id',auth, controller.deleteUser)
-
 // ********************** SIGNUP - ADD NEW USER **********************
 router.post('/signup',controller.signup)
 
 // ********************** LOGIN - USER **********************
 router.post('/signin',controller.signin)
+
+// ********************** Find user by ID **********************
+router.get('/:user_id',auth, controller.fetchUserDetails)
+
+// ********************** Remove user by ID **********************
+router.delete('/:user_id',auth, controller.deleteUser)
 
 module.exports = router;
