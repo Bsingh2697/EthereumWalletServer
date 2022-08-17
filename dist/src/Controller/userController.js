@@ -24,12 +24,10 @@ exports.fetchAllUsers = (request, response) => __awaiter(void 0, void 0, void 0,
     console.log("REQUEST BODY: ", request.body);
     try {
         const users = yield User.find();
-        users.then((list) => response.status(200).send({ status: { code: 200, message: "Success" }, data: { users: "users" } })).catch((err) => {
-            response.status(400).send({ status: { code: 400, message: { header: "Error fetching users", body: err } } });
-        });
+        response.send({ status: { code: 200, message: "Success" }, data: { users: "users" } });
     }
     catch (err) {
-        response.status(400).send({ status: { code: 400, message: { header: "Error fetching users", body: err } } });
+        response.send({ status: { code: 400, message: { header: "Error fetching users", body: err } } });
     }
 });
 // ********************** FETCH USER DETAILS ROUTE: "/:user_id" **********************
