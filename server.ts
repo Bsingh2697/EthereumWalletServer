@@ -26,12 +26,12 @@ const init = async() => {
     const db = new Database();
     await db.connectToDb() 
 }
-
+  
 // ********************** INITIALIZE APPLICATION **********************
 init();
 
 app.get('/', (req, res) => {
-  res.send(`hello world SIR, ${mongoose.connection.readyState}`)
+  res.send(`hello world SIR, ${mongoose.connection.readyState} ---`)
 })
 
 // ********************** SET PORT **********************
