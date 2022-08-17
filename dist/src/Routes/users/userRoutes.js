@@ -22,7 +22,9 @@ const {
  */
 // ********************** Test API **********************
 router.get("/test", (req, res) => {
-  res.send("hello world SIR 222");
+  let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`;
+  let uu = process.env.UNIQUE_USERNAME;
+  res.send(`hello world SIR 222 -  ${connStr} -- ${uu}`);
 });
 // // ********************** Find All Users **********************
 // router.get('/',controller.fetchAllUsers)
