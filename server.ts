@@ -15,10 +15,10 @@ const app: Application = express();
 // ********************** Middleware And Routes **********************
 
     // Middleware
-    app.use(cors())
-    app.use(express.json())
-    // ROUTES
-    app.use(URL_CONSTANTS.user,usersRoute)
+    // app.use(cors())
+    // app.use(express.json())
+    // // ROUTES
+    // app.use(URL_CONSTANTS.user,usersRoute)
 
 // ********************** INIT FUNCTION **********************
 const init = async() => {
@@ -29,9 +29,9 @@ const init = async() => {
 // ********************** INITIALIZE APPLICATION **********************
 init();
 
-// app.get('/', (req, res) => {
-//   res.send('hello world')
-// })
+app.get('/', (req, res) => {
+  res.send('hello world SIR')
+})
 
 // ********************** SET PORT **********************
 const PORT = process.env.PORT || 3000 || 8080;
