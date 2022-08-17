@@ -19,7 +19,7 @@ class Database {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
                 try {
-                    let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`;
+                    let connStr = `mongodb+srv://Bharat:Bharat2697@bharatcluster.6a96d.mongodb.net/Users`;
                     mongoose_1.default.connect(connStr);
                     const conn = mongoose_1.default.connection;
                     conn.on('connected', () => {
@@ -37,3 +37,5 @@ class Database {
     }
 }
 exports.Database = Database;
+// DB_NAME=Users
+// DB_URL=mongodb+srv://Bharat:Bharat2697@bharatcluster.6a96d.mongodb.net/

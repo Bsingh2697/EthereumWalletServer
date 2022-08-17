@@ -5,7 +5,7 @@ export class Database {
     async connectToDb() {
         return new Promise((resolve, reject) => {
             try{
-                let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`
+                let connStr = `mongodb+srv://Bharat:Bharat2697@bharatcluster.6a96d.mongodb.net/Users`
                 mongoose.connect(connStr)
                 const conn = mongoose.connection
                 conn.on('connected', () => {
@@ -21,3 +21,6 @@ export class Database {
     }
 
 }
+
+// DB_NAME=Users
+// DB_URL=mongodb+srv://Bharat:Bharat2697@bharatcluster.6a96d.mongodb.net/
