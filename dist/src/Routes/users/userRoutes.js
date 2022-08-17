@@ -22,7 +22,7 @@ const {
  */
 // ********************** Test API **********************
 router.get("/test", (req, res) => {
-  res.send("hello world SIR");
+  res.send("hello world SIR 222");
 });
 // ********************** Find All Users **********************
 router.get("/", controller.fetchAllUsers);

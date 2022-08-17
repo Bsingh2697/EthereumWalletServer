@@ -18,7 +18,7 @@ const {registerValidation, loginValidation} = require('../../Validation/validati
 
 // ********************** Test API **********************
 router.get('/test', (req, res) => {
-  res.send('hello world SIR')
+  res.send('hello world SIR 222')
 })
 
 // ********************** Find All Users **********************
