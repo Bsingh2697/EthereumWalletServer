@@ -54,11 +54,21 @@ router.get("/test", (req, res) =>
     let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`;
     let uu = process.env.UNIQUE_USERNAME;
     const user = yield User.find();
-    res.send(
-      `hello world SIR 222 -  ${connStr} -- ${uu} ---------- ${
-        mongoose_1.default.connection.readyState
-      } ----------- ${user.stringify()}`
-    );
+    user
+      .then(() =>
+        res.send(
+          `hello world SIR 222 -  ${connStr} -- ${uu} ---------- ${
+            mongoose_1.default.connection.readyState
+          } ----------- ${user.stringify()}`
+        )
+      )
+      .catch((err) =>
+        res.send(
+          `hello world SIR 222 -  ${connStr} -- ${uu} ---------- ${
+            mongoose_1.default.connection.readyState
+          } ----------- ${err.stringify()}`
+        )
+      );
   })
 );
 // ********************** Find All Users **********************
