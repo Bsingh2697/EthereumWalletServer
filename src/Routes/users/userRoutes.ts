@@ -11,8 +11,18 @@ const auth = require('../../Middlewares/auth');
 const User = require('../../models/UserModel/User')
 const {registerValidation, loginValidation} = require('../../Validation/validation') 
 
+
+/*
+** Order of routes matter
+** If we put "/key" route under "/:user_id" then
+** we won't be able to access "/key" route
+*/
+
 // ********************** Find All Users **********************
 router.get('/',controller.fetchAllUsers)
+
+// ********************** Find key by ID **********************
+router.get('/key',auth, controller.fetchUserPrivateKey)
 
 // ********************** Find user by ID **********************
 router.get('/:user_id',auth, controller.fetchUserDetails)

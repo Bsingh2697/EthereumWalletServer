@@ -33,11 +33,7 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    address_uname: {
-        type: String,
-        required: true
-    },
-    address_pwd: {
+    address: {
         type: String,
         required: true
     }

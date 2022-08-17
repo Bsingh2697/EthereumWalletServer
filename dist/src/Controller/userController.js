@@ -17,6 +17,7 @@ const crypto_js_1 = __importDefault(require("crypto-js"));
 const jwt = require('jsonwebtoken');
 const User = require('../models/UserModel/User');
 const { registerValidation, loginValidation } = require('../Validation/validation');
+// ********************** FETCH ALL USER ROUTE: "/" **********************
 exports.fetchAllUsers = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("REQUEST : ", request);
     console.log("REQUEST : ", request === null || request === void 0 ? void 0 : request.user);
@@ -24,50 +25,73 @@ exports.fetchAllUsers = (request, response) => __awaiter(void 0, void 0, void 0,
     console.log("REQUEST BODY: ", request.body);
     try {
         const users = yield User.find();
-        response.json(users);
+        response.status(200).send({ status: { code: 200, message: "Success" }, data: { users: users } });
     }
     catch (err) {
-        response.json({ message: err });
+        response.status(400).send({ status: { code: 400, message: { header: "Error fetching users", body: err } } });
     }
 });
+// ********************** FETCH USER DETAILS ROUTE: "/:user_id" **********************
 exports.fetchUserDetails = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log("ID : ", request.params.user_id);
         const user = yield User.findById(request.params.user_id);
-        response.json(user);
+        const address = AES_1.default.decrypt(user === null || user === void 0 ? void 0 : user.address, process.env.UNIQUE_USERNAME).toString(crypto_js_1.default.enc.Utf8);
+        user ? response.status(200).send({ status: { code: 200, message: "Success" }, data: { user: user === null || user === void 0 ? void 0 : user._id, address: address } }) :
+            response.status(400).send({ status: { code: 400, message: { header: "Error fetching user details", body: "Unable to find user with the provided ID" } } });
+        // data:{user_id: user._id,address: user.address}});
     }
     catch (err) {
-        response.json({ message: err });
+        response.status(400).send({ status: { code: 400, message: { header: "Error fetching user details", body: "Unable to find user details, please try again!" } } });
     }
 });
+// ********************** FETCH USER PRIVATE KEY: "/key" **********************
+exports.fetchUserPrivateKey = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log("request", request === null || request === void 0 ? void 0 : request.user);
+        const user = yield User.findById(request.user.user_id);
+        user ? response.status(200).send({ status: { code: 200, message: "Success" }, data: { key: user === null || user === void 0 ? void 0 : user.private_key_pwd } }) :
+            response.status(400).send({ status: { code: 400, message: { header: "Error fetching user key", body: "Some error occurred, please try again!" } } });
+    }
+    catch (err) {
+        response.status(400).send({ status: { code: 400, message: { header: "Error fetching user key", body: "Unable to fetch user key, please try again!" } } });
+    }
+});
+// ********************** DELETE USER ROUTE: "/:user_id" **********************
 exports.deleteUser = (request, response, next) => __awaiter(void 0, void 0, void 0, function* () {
     // response.send("WE WANT MY DETAILS"); 
     try {
         const user = yield User.remove({ _id: request.params.user_id });
-        response.json(user);
+        response.status(200).send({ status: { code: 200, message: { header: "Success", body: "User has been removed successfully" } } });
     }
     catch (err) {
-        response.json({ message: err });
+        response.status(400).send({ status: { code: 400, message: { header: "Error deleting user", body: "Unable to delete user, please try again!" } } });
     }
 });
+// ********************** REGISTER USER ROUTE: "/:signup" **********************
 exports.signup = (request, response, next) => __awaiter(void 0, void 0, void 0, function* () {
     // === VALIDATING DATA ===
     const { error } = registerValidation(request.body);
     if (error)
-        return response.status(400).send(error.details[0].message);
+        return response.status(400).send({ status: { code: 400, message: { header: "Validation error", body: error.details[0].message } } });
     let privateKey = request.body.privateKey;
     let address = request.body.address;
     let username = request.body.username;
     let password = request.body.password;
     let uniqueKey = process.env.UNIQUE_USERNAME;
     console.log("UQ:", uniqueKey);
+    // PRIVATE KEY
     const encryptedPRK_uname = AES_1.default.encrypt(privateKey, username).toString();
     const encryptedPRK_pwd = AES_1.default.encrypt(privateKey, password).toString();
-    const encryptedAddress_uname = AES_1.default.encrypt(address, username).toString();
-    const encryptedAddress_pwd = AES_1.default.encrypt(address, password).toString();
+    // ADDRESS
+    const encryptedAddress = AES_1.default.encrypt(address, uniqueKey).toString();
+    // USERNAME
     const encryptedUname_pk = AES_1.default.encrypt(username, privateKey).toString();
     const encryptedUname_pwd = AES_1.default.encrypt(username, password).toString();
+    // PASSWORD
     const encryptedPwd_pk = AES_1.default.encrypt(password, privateKey).toString();
     const encryptedPwd_uname = AES_1.default.encrypt(password, username).toString();
+    // UNIQUENAME
     const uniqueUname = AES_1.default.encrypt(username, uniqueKey).toString();
     // === CHECKING IF USERNAME IS UNIQUE OR NOT
     const usernameList = yield User.find({}, { '_id': 0, 'unique_user': 1 });
@@ -82,13 +106,12 @@ exports.signup = (request, response, next) => __awaiter(void 0, void 0, void 0, 
         }
     }
     if (!isUnique)
-        return response.status(400).send('Already Exists');
+        return response.status(400).send({ status: { code: 400, message: { header: "Username not available", body: "Username already exusts" } } });
     // === CREATING USER ===
     const user = new User({
         private_key_uname: encryptedPRK_uname,
         private_key_pwd: encryptedPRK_pwd,
-        address_uname: encryptedAddress_uname,
-        address_pwd: encryptedAddress_pwd,
+        address: encryptedAddress,
         username_pk: encryptedUname_pk,
         username_pwd: encryptedUname_pwd,
         password_pk: encryptedPwd_pk,
@@ -109,45 +132,13 @@ exports.signup = (request, response, next) => __awaiter(void 0, void 0, void 0, 
     catch (err) {
         response.status(400).json({ message: err });
     }
-    // console.log("ENCRYPTED VALUES");
-    // console.log("ENCRYPTED PRIVATE KEY - USER NAME: " + encryptedPK_uname);
-    // console.log("ENCRYPTED PRIVATE KEY - PASSWORD: " + encryptedPK_pwd);
-    // console.log("ENCRYPTED USERNAME - PRIVATE KEY: " + encryptedUname_pk);
-    // console.log("ENCRYPTED USERNAME - PASSWORD: " + encryptedUname_pwd);
-    // console.log("ENCRYPTED PASSWORD - PRIVATE KEY: " + encryptedPwd_pk);
-    // console.log("ENCRYPTED PASSWORD - USER NAME: " + encryptedPwd_uname);
-    // console.log("DECRYPTED VALUES BYTES");
-    // const decryptedPK_uname = AES.decrypt(encryptedPK_uname,username)
-    // const decryptedPK_pwd = AES.decrypt(encryptedPK_pwd,password)
-    // const decryptedUname_pk = AES.decrypt(encryptedUname_pk,privateKey)
-    // const decryptedUname_pwd = AES.decrypt(encryptedUname_pwd,password)
-    // const decryptedPwd_pk = AES.decrypt(encryptedPwd_pk,privateKey)
-    // const decryptedPwd_uname = AES.decrypt(encryptedPK_uname,username)
-    // console.log("DECRYPTED PRIVATE KEY - USER NAME: " + decryptedPK_uname);
-    // console.log("DECRYPTED PRIVATE KEY - PASSWORD: " + decryptedPK_pwd);
-    // console.log("DECRYPTED USERNAME - PRIVATE KEY: " + decryptedUname_pk);
-    // console.log("DECRYPTED USERNAME - PASSWORD: " + decryptedUname_pwd);
-    // console.log("DECRYPTED PASSWORD - PRIVATE KEY: " + decryptedPwd_pk);
-    // console.log("DECRYPTED PASSWORD - USER NAME: " + decryptedPwd_uname);
-    // console.log("DECRYPTED VALUES ORIGINAL TEXT");
-    // const decryptedPK_uname_OG = decryptedPK_uname.toString(CryptoJS.enc.Utf8)
-    // const decryptedPK_pwd_OG = decryptedPK_pwd.toString(CryptoJS.enc.Utf8)
-    // const decryptedUname_pk_OG = decryptedUname_pk.toString(CryptoJS.enc.Utf8)
-    // const decryptedUname_pwd_OG = decryptedUname_pwd.toString(CryptoJS.enc.Utf8)
-    // const decryptedPwd_pk_OG = decryptedPwd_pk.toString(CryptoJS.enc.Utf8)
-    // const decryptedPwd_uname_OG = decryptedPwd_uname.toString(CryptoJS.enc.Utf8)
-    // console.log("OG - DECRYPTED PRIVATE KEY - USER NAME: " + decryptedPK_uname_OG);
-    // console.log("OG - DECRYPTED PRIVATE KEY - PASSWORD: " + decryptedPK_pwd_OG);
-    // console.log("OG - DECRYPTED USERNAME - PRIVATE KEY: " + decryptedUname_pk_OG);
-    // console.log("OG - DECRYPTED USERNAME - PASSWORD: " + decryptedUname_pwd_OG);
-    // console.log("OG - DECRYPTED PASSWORD - PRIVATE KEY: " + decryptedPwd_pk_OG);
-    // console.log("OG - DECRYPTED PASSWORD - USER NAME: " + decryptedPwd_uname_OG);   
 });
+// ********************** REGISTER USER ROUTE: "/:signin" **********************
 exports.signin = (request, response, next) => __awaiter(void 0, void 0, void 0, function* () {
     // === VALIDATING DATA ===
     const { error } = loginValidation(request.body);
     if (error)
-        return response.status(400).send(error.details[0].message);
+        return response.status(400).send({ status: { code: 400, message: { header: "Validation error", body: error.details[0].message } } });
     const username = request.body.username;
     const password = request.body.password;
     let uniqueKey = process.env.UNIQUE_USERNAME;
@@ -192,7 +183,7 @@ exports.signin = (request, response, next) => __awaiter(void 0, void 0, void 0, 
             var _a, _b;
             console.log("SUCCESS PROMISE", res);
             const token = yield jwt.sign({ user_id: (_a = res[0]) === null || _a === void 0 ? void 0 : _a._id, }, uniqueKey, { algorithm: 'HS256' }, { expiresIn: 10000000 });
-            let address = AES_1.default.decrypt((_b = res[0]) === null || _b === void 0 ? void 0 : _b.address_uname, username).toString(crypto_js_1.default.enc.Utf8);
+            let address = AES_1.default.decrypt((_b = res[0]) === null || _b === void 0 ? void 0 : _b.address, process.env.UNIQUE_USERNAME).toString(crypto_js_1.default.enc.Utf8);
             return response.status(200).send({ status: { code: 200, message: "Success" }, data: { user: { user_id: res[0]._id, address: address }, token: token } });
         })).catch((error) => {
             return response.status(400).send({ status: { code: 400, message: { header: "Invalid Credentials", body: "Please try with correct credentials" } } });

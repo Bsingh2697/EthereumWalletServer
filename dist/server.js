@@ -36,5 +36,5 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
 // ********************** INITIALIZE APPLICATION **********************
 init();
 // ********************** SET PORT **********************
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000 || 8080;
 app.listen(PORT, () => console.log("Server running"));

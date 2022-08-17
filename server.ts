@@ -30,5 +30,5 @@ const init = async() => {
 init();
 
 // ********************** SET PORT **********************
-const PORT = process.env.PORT || 8080 || 3000;
+const PORT = process.env.PORT || 3000 || 8080;
 app.listen(PORT,()=>console.log("Server running"));
