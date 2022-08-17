@@ -16,7 +16,7 @@ export class Database {
                 conn.once('open', () => console.log("Open"))
             }catch(error){
                 reject(error)
-            }
+            } 
         })
     }
 
