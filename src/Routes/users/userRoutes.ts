@@ -1,5 +1,5 @@
 import express, {Application, Request, Response, NextFunction} from 'express';
-
+import mongoose from "mongoose"
 const controller = require('../../Controller/userController.ts')
 
 const router = express.Router();
@@ -14,7 +14,7 @@ const router = express.Router();
 router.get('/test', (req, res) => {
     let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`
     let uu = process.env.UNIQUE_USERNAME
-  res.send(`hello world SIR 222 -  ${connStr} -- ${uu}`,)
+  res.send(`hello world SIR 222 -  ${connStr} -- ${uu} ---------- ${mongoose.connection.readyState}`,)
 })
 
 // ********************** Find All Users **********************

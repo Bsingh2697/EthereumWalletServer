@@ -21,36 +21,17 @@ const app: Application = express();
     // ROUTES
     app.use(URL_CONSTANTS.user,usersRoute)
 
-// // ********************** INIT FUNCTION **********************
-// const init = async() => {
-//     const db = new Database();
-//     await db.connectToDb() 
-// }
+// ********************** INIT FUNCTION **********************
+const init = async() => {
+    const db = new Database();
+    await db.connectToDb() 
+}
 
-// // ********************** INITIALIZE APPLICATION **********************
-// init();
+// ********************** INITIALIZE APPLICATION **********************
+init();
 
 app.get('/', (req, res) => {
-  try{
-      let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`
-      mongoose.connect(connStr)
-      const conn = mongoose.connection
-      conn.on('connected', () => {
-          console.log("Connected")
-      res.send('Connected')
-      })
-      conn.on('error', ()=>
-      {
-          console.log("Error"),
-          res.send('TRY ERROR')
-      })
-      conn.once('open', () => 
-      {   console.log("Open"),
-          res.send('Open')
-      })
-  }catch(error){
-       res.send('ERROR CATCH')
-  }
+  res.send(`hello world SIR, ${mongoose.connection.readyState}`)
 })
 
 // ********************** SET PORT **********************

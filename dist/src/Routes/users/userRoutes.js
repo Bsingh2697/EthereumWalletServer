@@ -6,6 +6,7 @@ var __importDefault =
   };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const mongoose_1 = __importDefault(require("mongoose"));
 const controller = require("../../Controller/userController.js");
 const router = express_1.default.Router();
 /*
@@ -17,7 +18,9 @@ const router = express_1.default.Router();
 router.get("/test", (req, res) => {
   let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`;
   let uu = process.env.UNIQUE_USERNAME;
-  res.send(`hello world SIR 222 -  ${connStr} -- ${uu}`);
+  res.send(
+    `hello world SIR 222 -  ${connStr} -- ${uu} ---------- ${mongoose_1.default.connection.readyState}`
+  );
 });
 // ********************** Find All Users **********************
 router.get("/", controller.fetchAllUsers);
