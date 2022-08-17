@@ -49,39 +49,20 @@ const User = require("../../models/UserModel/User");
  ** we won't be able to access "/key" route
  */
 // ********************** Test API **********************
-router.get("/test", (req, res) => {
-  let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`;
-  let uu = process.env.UNIQUE_USERNAME;
-  res.send(
-    `hello world SIR 222 -  ${connStr} -- ${uu} ---------- ${mongoose_1.default.connection.readyState}`
-  );
-});
-// ********************** Find All Users **********************
-router.get("/", (request, response) =>
+router.get("/test", (req, res) =>
   __awaiter(void 0, void 0, void 0, function* () {
-    console.log("REQUEST : ", request);
-    console.log(
-      "REQUEST : ",
-      request === null || request === void 0 ? void 0 : request.user
+    let connStr = `${process.env.DB_URL}${process.env.DB_NAME}`;
+    let uu = process.env.UNIQUE_USERNAME;
+    const user = yield User.find();
+    res.send(
+      `hello world SIR 222 -  ${connStr} -- ${uu} ---------- ${
+        mongoose_1.default.connection.readyState
+      } ----------- ${user.stringify()}`
     );
-    console.log("REQUEST PARAM : ", request.params);
-    console.log("REQUEST BODY: ", request.body);
-    try {
-      const users = yield User.find();
-      response.status(200).send({
-        status: { code: 200, message: "Success" },
-        data: { users: users },
-      });
-    } catch (err) {
-      response.status(400).send({
-        status: {
-          code: 400,
-          message: { header: "Error fetching users", body: err },
-        },
-      });
-    }
   })
 );
+// ********************** Find All Users **********************
+router.get("/", controller.fetchAllUsers);
 // // ********************** Find key by ID **********************
 // router.get('/key',auth, controller.fetchUserPrivateKey)
 // // ********************** Find user by ID **********************
