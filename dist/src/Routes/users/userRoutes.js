@@ -1,4 +1,37 @@
 "use strict";
+var __awaiter =
+  (this && this.__awaiter) ||
+  function (thisArg, _arguments, P, generator) {
+    function adopt(value) {
+      return value instanceof P
+        ? value
+        : new P(function (resolve) {
+            resolve(value);
+          });
+    }
+    return new (P || (P = Promise))(function (resolve, reject) {
+      function fulfilled(value) {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function rejected(value) {
+        try {
+          step(generator["throw"](value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function step(result) {
+        result.done
+          ? resolve(result.value)
+          : adopt(result.value).then(fulfilled, rejected);
+      }
+      step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+  };
 var __importDefault =
   (this && this.__importDefault) ||
   function (mod) {
@@ -9,6 +42,7 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const controller = require("../../Controller/userController.js");
 const router = express_1.default.Router();
+const User = require("../../models/UserModel/User");
 /*
  ** Order of routes matter
  ** If we put "/key" route under "/:user_id" then
@@ -23,7 +57,31 @@ router.get("/test", (req, res) => {
   );
 });
 // ********************** Find All Users **********************
-router.get("/", controller.fetchAllUsers);
+router.get("/", (request, response) =>
+  __awaiter(void 0, void 0, void 0, function* () {
+    console.log("REQUEST : ", request);
+    console.log(
+      "REQUEST : ",
+      request === null || request === void 0 ? void 0 : request.user
+    );
+    console.log("REQUEST PARAM : ", request.params);
+    console.log("REQUEST BODY: ", request.body);
+    try {
+      const users = yield User.find();
+      response.status(200).send({
+        status: { code: 200, message: "Success" },
+        data: { users: users },
+      });
+    } catch (err) {
+      response.status(400).send({
+        status: {
+          code: 400,
+          message: { header: "Error fetching users", body: err },
+        },
+      });
+    }
+  })
+);
 // // ********************** Find key by ID **********************
 // router.get('/key',auth, controller.fetchUserPrivateKey)
 // // ********************** Find user by ID **********************

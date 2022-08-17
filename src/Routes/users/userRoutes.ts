@@ -4,6 +4,7 @@ const controller = require('../../Controller/userController.ts')
 
 const router = express.Router();
 
+const User = require('../../models/UserModel/User')
 /*
 ** Order of routes matter
 ** If we put "/key" route under "/:user_id" then
@@ -17,8 +18,27 @@ router.get('/test', (req, res) => {
   res.send(`hello world SIR 222 -  ${connStr} -- ${uu} ---------- ${mongoose.connection.readyState}`,)
 })
 
+
+export interface UserRequest extends Request {
+    user : {
+        user_id ?: string
+    }
+}
+
 // ********************** Find All Users **********************
-router.get('/',controller.fetchAllUsers)
+router.get('/',async(request:UserRequest,response:any) => {
+    console.log("REQUEST : ",request);
+    console.log("REQUEST : ",request?.user);
+    console.log("REQUEST PARAM : ",request.params);
+    console.log("REQUEST BODY: ",request.body);
+    try{
+        const users = await User.find()
+        response.status(200).send({status:{code:200, message:"Success"},data:{users:users}})
+    }
+    catch(err){
+        response.status(400).send({status:{code:400, message:{header:"Error fetching users",body:err}}})
+    }
+})
 
 // // ********************** Find key by ID **********************
 // router.get('/key',auth, controller.fetchUserPrivateKey)
