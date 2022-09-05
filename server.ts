@@ -30,10 +30,6 @@ const init = async() => {
 // ********************** INITIALIZE APPLICATION **********************
 init();
 
-app.get('/', (req, res) => {
-  res.send(`hello world SIR, ${mongoose.connection.readyState} ---`)
-})
-
 // ********************** SET PORT **********************
 const PORT = process.env.PORT || 3000 || 8080;
 app.listen(PORT,()=>console.log("Server running"));
